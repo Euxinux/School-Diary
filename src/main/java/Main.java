@@ -5,11 +5,10 @@ import java.util.GregorianCalendar;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Elo");
         ConnectWithDataBase cWDB = new ConnectWithDataBase("ConnectWithDataBase","jdbc:mysql://localhost:3306/school","root","");
         Connection connection = cWDB.getConnection();
         Student student = new Student();
-        student.addStudent();
+        student.addStudent(connection);
 
         /*
         GregorianCalendar calendar = new GregorianCalendar(1999,2,27);
