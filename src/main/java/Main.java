@@ -8,6 +8,8 @@ public class Main {
         System.out.println("Elo");
         ConnectWithDataBase cWDB = new ConnectWithDataBase("ConnectWithDataBase","jdbc:mysql://localhost:3306/school","root","");
         Connection connection = cWDB.getConnection();
+        Student student = new Student();
+        student.addStudent();
 
         /*
         GregorianCalendar calendar = new GregorianCalendar(1999,2,27);
