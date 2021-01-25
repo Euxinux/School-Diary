@@ -1,4 +1,5 @@
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -13,7 +14,8 @@ public class Student {
     Scanner scanner = new Scanner(System.in);
     Statement statement = null;
 
-    public void addStudent(Connection connection) {
+    public void addStudent(Connection connection)
+    {
         // Set all needed variable
         String name;
         String lastName;
@@ -35,6 +37,7 @@ public class Student {
             sql = "INSERT INTO `schooldairy`(`StudentID`, `Name`, `LastName`, `DateOfBrith`) " +
                     "VALUES (NULL,'" + name + "','" + lastName+"','" + stringBrith +"')";
             statement.executeUpdate(sql);
+            statement.close();
         }
         catch (SQLException throwables)
         {
@@ -54,15 +57,38 @@ public class Student {
             statement = connection.createStatement();
             sql = "DELETE FROM schooldairy WHERE StudentID = " + studentID;
             statement.executeUpdate(sql);
+            statement.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayStudent(Connection connection)
+    {
+        int i = 1;
+        String sql;
+        try {
+            statement = connection.createStatement();
+            sql = "SELECT `Name`, `LastName`, `DateOfBrith` FROM `schooldairy` ORDER BY LastName ASC";
+            ResultSet rs  = statement.executeQuery(sql);
+
+            while(rs.next())
+            {
+                String name = rs.getString("Name");
+                String lastName = rs.getString("LastName");
+                String dateOfBrith = rs.getString("DateOfBrith");
+                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith);
+                i++;
+            }
+            statement.close();
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
 
-
-
     }
-
 }
 

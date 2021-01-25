@@ -9,7 +9,9 @@ public class Main {
         Connection connection = cWDB.getConnection();
         Student student = new Student();
       //student.addStudent(connection);
-        student.deleteStudent(connection);
+       // student.deleteStudent(connection);
+      student.displayStudent(connection);
+
 
     }
 
