@@ -11,7 +11,6 @@ import java.util.Scanner;
 public class Student {
 
     Scanner scanner = new Scanner(System.in);
-    Connection connection;
     Statement statement = null;
 
     public void addStudent(Connection connection) {
@@ -41,6 +40,28 @@ public class Student {
         {
             throwables.printStackTrace();
         }
+    }
+
+    public void deleteStudent(Connection connection)
+    {
+        int studentID;
+        String sql;
+        System.out.println("Which student you want delete from school dairy? Get ID: ");
+        studentID = scanner.nextInt();
+        try
+        {
+            System.out.println("Deleting student: " + studentID + " from school dairy");
+            statement = connection.createStatement();
+            sql = "DELETE FROM schooldairy WHERE StudentID = " + studentID;
+            statement.executeUpdate(sql);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+
     }
 
 }

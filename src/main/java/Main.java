@@ -8,12 +8,9 @@ public class Main {
         ConnectWithDataBase cWDB = new ConnectWithDataBase("ConnectWithDataBase","jdbc:mysql://localhost:3306/school","root","");
         Connection connection = cWDB.getConnection();
         Student student = new Student();
-        student.addStudent(connection);
+      //student.addStudent(connection);
+        student.deleteStudent(connection);
 
-        /*
-        GregorianCalendar calendar = new GregorianCalendar(1999,2,27);
-        System.out.println(calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
-        */
     }
 
 }
