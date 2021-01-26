@@ -1,3 +1,5 @@
+import com.mysql.cj.util.TimeUtil;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Student {
 
@@ -71,15 +74,16 @@ public class Student {
         String sql;
         try {
             statement = connection.createStatement();
-            sql = "SELECT `Name`, `LastName`, `DateOfBrith` FROM `schooldairy` ORDER BY LastName ASC";
+            sql = "SELECT `StudentID`,  `Name`, `LastName`, `DateOfBrith` FROM `schooldairy` ORDER BY LastName ASC";
             ResultSet rs  = statement.executeQuery(sql);
 
             while(rs.next())
             {
+                int idStudent = rs.getInt("StudentID");
                 String name = rs.getString("Name");
                 String lastName = rs.getString("LastName");
                 String dateOfBrith = rs.getString("DateOfBrith");
-                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith);
+                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith + " Personal ID: "+ idStudent);
                 i++;
             }
             statement.close();
@@ -88,6 +92,37 @@ public class Student {
         {
             e.printStackTrace();
         }
+
+    }
+
+    public void editStudent (Connection connection)
+    {
+        int studentID;
+        String studentEdit;
+        String correctParameter;
+        String sql;
+        displayStudent(connection);
+        System.out.println("Get personal ID student which you want edit: ");
+        studentID = scanner.nextInt();
+
+        System.out.println("Which parameter you want edit? Name, LastName or DateOfBrith");
+        studentEdit = scanner.next();
+
+        System.out.println("Get correctly parameter: ");
+        correctParameter = scanner.next();
+
+        sql = "UPDATE schooldairy SET " + studentEdit + " = '" + correctParameter + "' WHERE StudentID = " + studentID;
+        System.out.println(sql);
+
+        try {
+            statement = connection.createStatement();
+            sql = "UPDATE schooldairy SET " + studentEdit + " = '" + correctParameter + "' WHERE StudentID = " + studentID;            statement.executeUpdate(sql);
+            statement.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        displayStudent(connection);
+
 
     }
 }

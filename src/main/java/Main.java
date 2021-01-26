@@ -9,8 +9,12 @@ public class Main {
         Connection connection = cWDB.getConnection();
         Student student = new Student();
       //student.addStudent(connection);
-       // student.deleteStudent(connection);
-      student.displayStudent(connection);
+    //  student.deleteStudent(connection);
+    //  student.displayStudent(connection);
+       // student.editStudent(connection);
+        UserPanel uPanel = new UserPanel();
+        uPanel.LoginPanel();
+
 
 
     }
