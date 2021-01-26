@@ -5,7 +5,6 @@ import java.sql.SQLException;
 public class ConnectWithDataBase {
 
         String className, URL, user, password;
-        Connection connection;
 
         public ConnectWithDataBase(String className, String URL, String user, String password)
         {
@@ -13,7 +12,10 @@ public class ConnectWithDataBase {
             this.URL = URL;
             this.user = user;
             this.password = password;
-            this.connection = null;
+        }
+
+        public ConnectWithDataBase()
+        {
         }
         public Connection getConnection()
         {
@@ -27,7 +29,7 @@ public class ConnectWithDataBase {
             //get the connection
             try {
                 connection = DriverManager.getConnection(URL, user, password);
-                System.out.println("Connection succesful");
+                System.out.println("Connection successful");
             } catch (SQLException ex) {
                 System.out.println("Error getting connection: " + ex.getMessage());
                 System.exit(-1);
@@ -37,5 +39,6 @@ public class ConnectWithDataBase {
             }
             return connection;
         }
-    }
+        public Connection connection;
+}
 

@@ -12,7 +12,7 @@ public class Main {
     //  student.deleteStudent(connection);
     //  student.displayStudent(connection);
        // student.editStudent(connection);
-        UserPanel uPanel = new UserPanel();
+        UserPanel uPanel = new UserPanel(connection);
         uPanel.LoginPanel();
 
 
