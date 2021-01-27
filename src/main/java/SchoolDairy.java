@@ -12,7 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class Student {
+public class SchoolDairy {
 
     Scanner scanner = new Scanner(System.in);
     Statement statement = null;

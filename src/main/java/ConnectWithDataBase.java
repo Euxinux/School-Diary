@@ -29,7 +29,7 @@ public class ConnectWithDataBase {
             //get the connection
             try {
                 connection = DriverManager.getConnection(URL, user, password);
-                System.out.println("Connection successful");
+               // System.out.println("Connection successful");
             } catch (SQLException ex) {
                 System.out.println("Error getting connection: " + ex.getMessage());
                 System.exit(-1);
