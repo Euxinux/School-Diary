@@ -27,15 +27,11 @@ public class SchoolDairy {
         // Get from teacher student name/lastname and date of Brith
         System.out.println("Student name: "); name = scanner.nextLine();
         System.out.println("Student lastname: "); lastName = scanner.nextLine();
-        System.out.println(name + " " + lastName);
         System.out.println("Day of Birth in format 'yyyy-MM-dd'");
         stringBrith = scanner.next();
-        System.out.println(stringBrith);
-
         // Save student into DataBase
         try
         {
-            System.out.println("Inserting records into the table...");
             statement = connection.createStatement();
             sql = "INSERT INTO `schooldairy`(`StudentID`, `Name`, `LastName`, `DateOfBrith`) " +
                     "VALUES (NULL,'" + name + "','" + lastName+"','" + stringBrith +"')";
@@ -50,6 +46,7 @@ public class SchoolDairy {
 
     public void deleteStudent(Connection connection)
     {
+        displayStudent(connection);
         int studentID;
         String sql;
         System.out.println("Which student you want delete from school dairy? Get ID: ");
@@ -110,10 +107,6 @@ public class SchoolDairy {
 
         System.out.println("Get correctly parameter: ");
         correctParameter = scanner.next();
-
-        sql = "UPDATE schooldairy SET " + studentEdit + " = '" + correctParameter + "' WHERE StudentID = " + studentID;
-        System.out.println(sql);
-
         try {
             statement = connection.createStatement();
             sql = "UPDATE schooldairy SET " + studentEdit + " = '" + correctParameter + "' WHERE StudentID = " + studentID;            statement.executeUpdate(sql);

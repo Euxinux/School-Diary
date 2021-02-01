@@ -117,9 +117,9 @@ public class UserPanel {
                 }
             }
         }
-        catch (SQLException throwables)
+        catch (SQLException e)
         {
-            throwables.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }
