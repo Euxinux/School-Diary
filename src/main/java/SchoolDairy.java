@@ -1,19 +1,12 @@
-import com.mysql.cj.util.TimeUtil;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
-public class SchoolDairy {
-
+public class SchoolDairy
+{
     Scanner scanner = new Scanner(System.in);
     Statement statement = null;
 
@@ -46,11 +39,25 @@ public class SchoolDairy {
 
     public void deleteStudent(Connection connection)
     {
-        displayStudent(connection);
+        ArrayList<Integer> allUsersIDs = displayStudent(connection);
         int studentID;
+        boolean acceptedID = false;
         String sql;
         System.out.println("Which student you want delete from school dairy? Get ID: ");
         studentID = scanner.nextInt();
+        for (int i = 0; i < allUsersIDs.size(); i++)
+        {
+            if (allUsersIDs.get(i) == studentID)
+            {
+                acceptedID = true;
+                break;
+            }
+        }
+        if (!acceptedID)
+        {
+            System.out.println("Your entered StudentID was wrong! Try one more time.");
+            deleteStudent(connection);
+        }
         try
         {
             System.out.println("Deleting student: " + studentID + " from school dairy");
@@ -65,9 +72,10 @@ public class SchoolDairy {
         }
     }
 
-    public void displayStudent(Connection connection)
+    public ArrayList<Integer> displayStudent(Connection connection)
     {
         int i = 1;
+        ArrayList<Integer> studentsID = new ArrayList<Integer>();
         String sql;
         try {
             statement = connection.createStatement();
@@ -81,6 +89,7 @@ public class SchoolDairy {
                 String lastName = rs.getString("LastName");
                 String dateOfBrith = rs.getString("DateOfBrith");
                 System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith + " Personal ID: "+ idStudent);
+                studentsID.add(idStudent);
                 i++;
             }
             statement.close();
@@ -89,7 +98,7 @@ public class SchoolDairy {
         {
             e.printStackTrace();
         }
-
+        return studentsID;
     }
 
     public void editStudent (Connection connection)

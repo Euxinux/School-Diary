@@ -1,7 +1,6 @@
-import jdk.swing.interop.SwingInterOpUtils;
-
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -24,7 +23,6 @@ public class AccountType {
     public void Users (String[] infoDB)
     {
         int userAnswer = 0;
-        System.out.println("...");
         System.out.println("Welcome: " + infoDB[0]);
 
         switch (Integer.parseInt(infoDB[2]))
@@ -34,7 +32,6 @@ public class AccountType {
                 System.out.println("1. Show all students in school dairy");
                 System.out.println("2. Change password to account");
                 System.out.println("0. Logout. ");
-                userAnswer = scanner.nextInt();
                 break;
             case 2:
                 System.out.println("Your account is 'Teacher'");
@@ -45,7 +42,6 @@ public class AccountType {
                 System.out.println("5. Edit student's personal data");
                 System.out.println("6. Create new account - 'Student'");
                 System.out.println("0. Logout. ");
-                userAnswer = scanner.nextInt();
                 break;
             case 1:
                 System.out.println("Your account is 'Admin'");
@@ -59,8 +55,15 @@ public class AccountType {
                 System.out.println("8. Delete exist account");
                 System.out.println("9. Show users all users:");
                 System.out.println("0. Logout ");
-                userAnswer = scanner.nextInt();
                 break;
+        }
+        try {
+            userAnswer = scanner.nextInt();
+        }
+        catch (InputMismatchException e)
+        {
+            scanner.nextLine();
+            Users(infoDB);
         }
         switch (userAnswer)
         {
@@ -92,7 +95,7 @@ public class AccountType {
             case 7:
                 if (Integer.parseInt(infoDB[2]) <2)
                     EditAccount();
-                BackToMenu(infoDB);
+                Users(infoDB);
                 break;
             case 8:
                 if (Integer.parseInt(infoDB[2]) <2)
@@ -106,7 +109,7 @@ public class AccountType {
                 new UserPanel(connection).LoginPanel();
                 break;
             default:
-                BackToMenu(infoDB);
+                Users(infoDB);
         }
     }
 
@@ -184,25 +187,24 @@ public class AccountType {
                     }
                 } else
                     {
-                    System.out.println("Passwords are different!");
+                    System.out.println("Old password is different!");
                     ChangePassword(infoDB);
                 }
                 statement.close();
         }
-        catch (SQLException throwables)
+        catch (SQLException e)
         {
-            throwables.printStackTrace();
+            e.printStackTrace();
         }
-        BackToMenu(infoDB);
+        Users(infoDB);
     }
     public void CreateAccount (String[] infoDB)
     {
-        int userChoice = 0;
+        int userChoice;
         Statement statement;
         boolean isFree;
 
-        while (userChoice!= 1 && userChoice != 2 && userChoice !=3)
-        {
+
         System.out.println("Hello which type of account you want create ?: ");
         System.out.println("3. Student");
         if (Integer.parseInt(infoDB[2]) == 1)
@@ -210,76 +212,101 @@ public class AccountType {
             System.out.println("2. Teacher");
             System.out.println("1. Admin");
         }
-            try {
+            try
+            {
                 userChoice = scanner.nextInt();
-                System.out.println("Enter login: ");
-                String login = scanner.next();
-                isFree = new UserPanel(connection).freeName(login);
-                    if (!isFree)
-                    {
-                        System.out.println("Enter password: ");
-                        String password = scanner.next();
-                        try
-                        {
-                        statement = connection.createStatement();
-                        String sql = "INSERT INTO users (UsersID, Login, Password, Priority) VALUES (null, '" + login + "','"
-                                + password + "'," + userChoice + ")";
-                        statement.executeUpdate(sql);
-                        statement.close();
-                        }
-                        catch (SQLException throwables)
-                        {
-                        throwables.printStackTrace();
-                        }
+                if (Integer.parseInt(infoDB[2]) == 2)
+                {
+                    switch(userChoice){
+                        case 3:
+                            new UserPanel(connection).createAccount(userChoice);
+                            break;
+                        default:
+                            CreateAccount(infoDB);
+                            break;
                     }
-                    else
-                    {
-                        System.out.println("Login is hired!");
-                        CreateAccount(infoDB);
+                }
+                else
+                {
+                    switch (userChoice){
+                        case 3:
+                        case 2:
+                        case 1:
+                            new UserPanel(connection).createAccount(userChoice);
+                            break;
+                        default:
+                            CreateAccount(infoDB);
+                            break;
                     }
+                }
 
-
-            } catch (InputMismatchException e) {
-                System.out.println("Please chose number 1-3: ");
+            }
+            catch (InputMismatchException e) {
                 scanner.nextLine();
+               // CreateAccount(infoDB);
             }
         }
-    }
     public void EditAccount ()
     {
         int userChoice;
+        boolean acceptedID = false;
+        int userChoiceParameter = 0;
 
         System.out.println("Which account you want edit? Enter ID: ");
-        ShowAccounts();
+        ArrayList<Integer> allUsersIDs = ShowAccounts();
         userChoice = scanner.nextInt();
 
-
+        acceptedID = CheckID(userChoice, allUsersIDs);
+        while (userChoiceParameter != 1 || userChoiceParameter != 2)
+        {
+            if (!acceptedID) {
+                System.out.println("Your entered UsersID was wrong! Try one more time.");
+                EditAccount();
+            } else {
+                try {
+                    System.out.println("Which parameter you want edit?: ");
+                    System.out.println("1. Password ");
+                    System.out.println("2. Priority ");
+                    userChoiceParameter = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine();
+                }
+            }
+        }
 
     }
     public void DeleteAccount ()
     {
         Statement statement;
-        ShowAccounts();
-        int userID;
+        int userID = 0;
+        boolean acceptedID;
         String sql;
+        ArrayList<Integer> usersIDs = ShowAccounts();
         System.out.println("Which account you want delete from school dairy? Get ID: ");
         userID = scanner.nextInt();
-        try
+        acceptedID = CheckID(userID, usersIDs);
+
+        if (!acceptedID)
         {
-            System.out.println("Deleting users: " + userID);
-            statement = connection.createStatement();
-            sql = "DELETE FROM users WHERE UsersID = " + userID;
-            statement.executeUpdate(sql);
-            statement.close();
+            System.out.println("Your entered UsersID was wrong! Try one more time.");
+            DeleteAccount();
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        else {
+            try {
+                System.out.println("Deleting users: " + userID);
+                statement = connection.createStatement();
+                sql = "DELETE FROM users WHERE UsersID = " + userID;
+                statement.executeUpdate(sql);
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
-    public void ShowAccounts ()
+    public ArrayList<Integer> ShowAccounts ()
     {
         Statement statement;
+        ArrayList<Integer> allUsersIDs = new ArrayList<Integer>();
         try {
             statement = connection.createStatement();
             String sql = "SELECT * FROM users";
@@ -293,12 +320,25 @@ public class AccountType {
                 int usersID = rs.getInt("UsersID");
                 System.out.println(i +". LOGIN:  " + login + " PASSWORD: " + password + " PRIORITY: " + priority
                                    + " USERSID: " + usersID);
+                allUsersIDs.add(usersID);
                 i++;
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
+        return allUsersIDs;
+    }
+    public boolean CheckID(int IDToCheck, ArrayList<Integer> usersIDs)
+    {
+        boolean acceptedID = false;
+        for (int i = 0; i < usersIDs.size(); i++)
+        {
+            if (usersIDs.get(i) == IDToCheck)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
