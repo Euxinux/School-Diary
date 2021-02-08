@@ -3,9 +3,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectWithDataBase {
-
         String className, URL, user, password;
-
+        // Create constructor
         public ConnectWithDataBase(String className, String URL, String user, String password)
         {
             this.className = className;
@@ -13,23 +12,19 @@ public class ConnectWithDataBase {
             this.user = user;
             this.password = password;
         }
-
-        public ConnectWithDataBase()
-        {
-        }
+        // Create method responsible for connecting with database
         public Connection getConnection()
         {
-            //Load the driver class
+            // Load the driver class
             try {
                 Class.forName(className);
             } catch (ClassNotFoundException ex) {
                 System.out.println("Unable to load the class. Terminating the program");
                 System.exit(-1);
             }
-            //get the connection
+            // Get the connection
             try {
                 connection = DriverManager.getConnection(URL, user, password);
-               // System.out.println("Connection successful");
             } catch (SQLException ex) {
                 System.out.println("Error getting connection: " + ex.getMessage());
                 System.exit(-1);

@@ -9,6 +9,9 @@ public class AccountType {
     Connection connection;
     Scanner scanner = new Scanner(System.in);
 
+    public AccountType() {
+    }
+
     public AccountType(String login, Connection connection)
     {
         this.login = login;
@@ -68,7 +71,7 @@ public class AccountType {
         switch (userAnswer)
         {
             case 1:
-                new SchoolDairy().displayStudent(connection);
+                new SchoolDairy().DisplayStudent(connection);
                 BackToMenu(infoDB);
                 break;
             case 2:
@@ -76,16 +79,16 @@ public class AccountType {
                 break;
             case 3:
                 if (Integer.parseInt(infoDB[2]) <3)
-                    new SchoolDairy().addStudent(connection);
+                    new SchoolDairy().AddStudent(connection);
                 BackToMenu(infoDB);
                 break;
             case 4:
                 if (Integer.parseInt(infoDB[2]) <3)
-                    new SchoolDairy().deleteStudent(connection);
+                    new SchoolDairy().DeleteStudent(connection);
                 BackToMenu(infoDB);
             case 5:
                 if (Integer.parseInt(infoDB[2]) <3)
-                    new SchoolDairy().editStudent(connection);
+                    new SchoolDairy().EditStudent(connection);
                 BackToMenu(infoDB);
             case 6:
                 if (Integer.parseInt(infoDB[2]) <3)
@@ -219,7 +222,7 @@ public class AccountType {
                 {
                     switch(userChoice){
                         case 3:
-                            new UserPanel(connection).createAccount(userChoice);
+                            new UserPanel(connection).CreateAccount(userChoice);
                             break;
                         default:
                             CreateAccount(infoDB);
@@ -232,7 +235,7 @@ public class AccountType {
                         case 3:
                         case 2:
                         case 1:
-                            new UserPanel(connection).createAccount(userChoice);
+                            new UserPanel(connection).CreateAccount(userChoice);
                             break;
                         default:
                             CreateAccount(infoDB);
@@ -248,17 +251,25 @@ public class AccountType {
         }
     public void EditAccount ()
     {
-        int userChoice;
+        int userChoice = 0;
         boolean acceptedID = false;
         int userChoiceParameter = 0;
+        String sql = "";
 
         System.out.println("Which account you want edit? Enter ID: ");
         ArrayList<Integer> allUsersIDs = ShowAccounts();
-        userChoice = scanner.nextInt();
+            try
+            {
+                userChoice = scanner.nextInt();
+            }
+            catch (InputMismatchException e)
+            {
+                scanner.nextLine();
+            }
+            acceptedID = CheckID(userChoice, allUsersIDs);
 
-        acceptedID = CheckID(userChoice, allUsersIDs);
-        while (userChoiceParameter != 1 || userChoiceParameter != 2)
-        {
+            while (userChoiceParameter != 1 && userChoiceParameter != 2)
+            {
             if (!acceptedID) {
                 System.out.println("Your entered UsersID was wrong! Try one more time.");
                 EditAccount();
@@ -268,12 +279,46 @@ public class AccountType {
                     System.out.println("1. Password ");
                     System.out.println("2. Priority ");
                     userChoiceParameter = scanner.nextInt();
+
+                    switch (userChoiceParameter)
+                    {
+                        case 1: {
+                            String newPassword;
+                            System.out.println("Enter new password: ");
+                            newPassword = scanner.next();
+                            sql = "UPDATE users SET Password = '" + newPassword +"' WHERE UsersID = " + userChoice;
+                            break;
+                        }
+                        case 2:
+                        {
+                            int newPriority = 0;
+                            while (newPriority != 1 && newPriority !=2 && newPriority !=3)
+                            {
+                                System.out.println("Enter new priority 1, 2 or 3: ");
+                                try{
+                                    newPriority = scanner.nextInt();
+                                }
+                                catch (InputMismatchException e)
+                                {
+                                    scanner.nextLine();
+                                }
+                            }
+                            sql = "UPDATE users SET Priority = " + newPriority +" WHERE UsersID = " + userChoice;
+                        }
+                    }
+                    try {
+                        Statement statement;
+                        statement = connection.createStatement();
+                        statement.executeUpdate(sql);
+                        statement.close();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
                 } catch (InputMismatchException e) {
                     scanner.nextLine();
                 }
             }
         }
-
     }
     public void DeleteAccount ()
     {

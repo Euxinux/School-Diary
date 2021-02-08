@@ -3,129 +3,167 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class SchoolDairy
-{
+public class SchoolDairy {
+    // Local variable used in method
     Scanner scanner = new Scanner(System.in);
     Statement statement = null;
 
-    public void addStudent(Connection connection)
-    {
+    // addStudent method allows to add student to school dairy,
+    // this method is available only for account with priority 'Admin' or 'Teacher'
+    public void AddStudent(Connection connection) {
         // Set all needed variable
-        String name;
-        String lastName;
-        String stringBrith;
-        String sql;
-        // Get from teacher student name/lastname and date of Brith
-        System.out.println("Student name: "); name = scanner.nextLine();
-        System.out.println("Student lastname: "); lastName = scanner.nextLine();
+        String name, lastName, stringBirth, sql;
+        // Get information about student (Name, Lastname, Date of Birth)
+        System.out.println("Student name: ");
+        name = scanner.nextLine();
+        System.out.println("Student lastname: ");
+        lastName = scanner.nextLine();
         System.out.println("Day of Birth in format 'yyyy-MM-dd'");
-        stringBrith = scanner.next();
+        stringBirth = scanner.next();
+
         // Save student into DataBase
-        try
-        {
+        // Create statement, create command in SQL and execute update
+        try {
             statement = connection.createStatement();
             sql = "INSERT INTO `schooldairy`(`StudentID`, `Name`, `LastName`, `DateOfBrith`) " +
-                    "VALUES (NULL,'" + name + "','" + lastName+"','" + stringBrith +"')";
+                    "VALUES (NULL,'" + name + "','" + lastName + "','" + stringBirth + "')";
             statement.executeUpdate(sql);
             statement.close();
-        }
-        catch (SQLException throwables)
-        {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
-    public void deleteStudent(Connection connection)
-    {
-        ArrayList<Integer> allUsersIDs = displayStudent(connection);
+    // deleteStudent method allows to delete student from school dairy
+    // this method is available only for account with priority 'Admin' or 'Teacher'
+    public void DeleteStudent(Connection connection) {
+        // ArrayList includes all unique student's IDs in DataBase
+        ArrayList<Integer> studentsIDsDB = DisplayStudent(connection);
         int studentID;
         boolean acceptedID = false;
         String sql;
-        System.out.println("Which student you want delete from school dairy? Get ID: ");
+
+        System.out.println("Which student you want delete from school dairy? Enter ID: ");
         studentID = scanner.nextInt();
-        for (int i = 0; i < allUsersIDs.size(); i++)
-        {
-            if (allUsersIDs.get(i) == studentID)
-            {
+        // for each loop check entered value is exist in data base and return boolean value
+        for (Integer allUsersID : studentsIDsDB) {
+            if (allUsersID == studentID) {
                 acceptedID = true;
                 break;
             }
         }
-        if (!acceptedID)
-        {
+        // If entered value didn't exist in database start again delete method.
+        if (!acceptedID) {
             System.out.println("Your entered StudentID was wrong! Try one more time.");
-            deleteStudent(connection);
+            DeleteStudent(connection);
         }
-        try
-        {
+        // Deleting student from school dairy using SQL command
+        try {
             System.out.println("Deleting student: " + studentID + " from school dairy");
             statement = connection.createStatement();
             sql = "DELETE FROM schooldairy WHERE StudentID = " + studentID;
             statement.executeUpdate(sql);
             statement.close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<Integer> displayStudent(Connection connection)
-    {
+    // show all students in school dairy
+    // this method is available for all type of account
+    // method return ArrayList with all student's IDs
+    public ArrayList<Integer> DisplayStudent(Connection connection) {
         int i = 1;
-        ArrayList<Integer> studentsID = new ArrayList<Integer>();
+        ArrayList<Integer> studentsID = new ArrayList<>();
         String sql;
+
         try {
             statement = connection.createStatement();
             sql = "SELECT `StudentID`,  `Name`, `LastName`, `DateOfBrith` FROM `schooldairy` ORDER BY LastName ASC";
-            ResultSet rs  = statement.executeQuery(sql);
+            ResultSet rs = statement.executeQuery(sql);
 
-            while(rs.next())
-            {
+            while (rs.next()) {
                 int idStudent = rs.getInt("StudentID");
                 String name = rs.getString("Name");
                 String lastName = rs.getString("LastName");
-                String dateOfBrith = rs.getString("DateOfBrith");
-                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith + " Personal ID: "+ idStudent);
+                String dateOfBrith = rs.getString("DateOfBirth");
+                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith + " Personal ID: " + idStudent);
                 studentsID.add(idStudent);
                 i++;
             }
             statement.close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return studentsID;
     }
 
-    public void editStudent (Connection connection)
-    {
-        int studentID;
-        String studentEdit;
-        String correctParameter;
-        String sql;
-        displayStudent(connection);
+    // method allows change all personal parameters like Name, Lastname or Date of Birth
+    // this method is available for teacher and admin account
+    public void EditStudent(Connection connection) {
+        int studentID = 0, studentEdit = 0;
+        String correctParameter, sql = " ";
+        boolean acceptedID;
+
         System.out.println("Get personal ID student which you want edit: ");
-        studentID = scanner.nextInt();
-
-        System.out.println("Which parameter you want edit? Name, LastName or DateOfBrith");
-        studentEdit = scanner.next();
-
-        System.out.println("Get correctly parameter: ");
-        correctParameter = scanner.next();
+        //using display method in order to compare user enter variable with local data base
+        ArrayList<Integer> allUsersIDs = DisplayStudent(connection);
         try {
-            statement = connection.createStatement();
-            sql = "UPDATE schooldairy SET " + studentEdit + " = '" + correctParameter + "' WHERE StudentID = " + studentID;            statement.executeUpdate(sql);
-            statement.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            studentID = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
         }
-        displayStudent(connection);
 
+        acceptedID = new AccountType().CheckID(studentID, allUsersIDs);
+        if (!acceptedID) {
+            System.out.println("Your entered StudentID was wrong! Try one more time.");
+            EditStudent(connection);
+        }
+        // while loop using to accept only values 1,2,3
+        while (studentEdit != 1 && studentEdit != 2 && studentEdit != 3) {
+            System.out.println("Which parameter you want edit?");
+            System.out.println("1. Name");
+            System.out.println("2. Lastname");
+            System.out.println("3. Date of Brith");
 
+            try {
+                studentEdit = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                scanner.nextLine();
+            }
+            // case loop used to create few options SQL command depending on the entered value
+            switch (studentEdit) {
+                case 1: {
+                    System.out.println("Enter new name: ");
+                    correctParameter = scanner.next();
+                    sql = "UPDATE schooldairy SET Name = '" + correctParameter + "' WHERE StudentID = " + studentID;
+                    break;
+                }
+                case 2: {
+                    System.out.println("Enter new lastname: ");
+                    correctParameter = scanner.next();
+                    sql = "UPDATE schooldairy SET LastName = '" + correctParameter + "' WHERE StudentID = " + studentID;
+                    break;
+                }
+                case 3: {
+                    System.out.println("Enter new Date of Brith in format YYYY-MM-DD: ");
+                    correctParameter = scanner.next();
+                    sql = "UPDATE schooldairy SET DateOfBrith = '" + correctParameter + "' WHERE StudentID = " + studentID;
+                    break;
+                }
+            }
+            // create statement
+            try {
+                Statement statement;
+                statement = connection.createStatement();
+                statement.executeUpdate(sql);
+                statement.close();
+            } catch (SQLException ignored) {
+            }
+        }
     }
 }
 

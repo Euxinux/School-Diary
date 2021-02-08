@@ -10,50 +10,51 @@ public class UserPanel {
     int choiceUser = 0; // Sing Up or Register
     Scanner scanner = new Scanner(System.in);
 
+    // public constructor
     public UserPanel(Connection connection)
     {
         this.connection = connection;
     }
 
+    // First/ Main screen JAVA API
+    // Two possible options to choose, easy option to expansion
+    // 1. Create new account to login in school dairy
+    // 2. Sing up with using already existing account
     public void LoginPanel()
     {
         System.out.println("Welcome in SchoolDairy by Dijkstra");
         System.out.println("                                  ");
-
-        while (choiceUser != 1 && choiceUser !=2)
-        {
-            try
-            {
+        // While loop to accept only options 1 or 2
+        while (choiceUser != 1 && choiceUser !=2) {
+            try {
                 System.out.println("Please choose 1 of 2 possible choice 1 or 2 :)");
                 System.out.println("1. Register new Account (User)");
                 System.out.println("2. Log In");
                 choiceUser = scanner.nextInt();
             }
-            catch (InputMismatchException e)
-            {
+            catch (InputMismatchException e) {
                 scanner.nextLine();
             }
-            switch (choiceUser)
-            {
+            switch (choiceUser) {
                 case 1:
                     choiceUser = 0;
                     int priority = 3;
-                    createAccount(priority);
+                    CreateAccount(priority);
                 case 2:
                     logIn();
             }
         }
     }
 
-    public void createAccount(int priority)
+    // This method is triggered to create new account
+    // All account whit all priority can use this method
+    public void CreateAccount(int priority)
     {
-        String login;
-        String password1;
-        String password2;
+        String login, password1, password2, sql;
         Statement statement;
-        String sql;
         boolean isEmpty;
-
+        // Get from users information like: login, password and repeated password
+        // for user safety
         System.out.println("Enter your new personal login. Remember letter size is matter.");
         login = scanner.next();
         System.out.println("Enter your password: ");
@@ -62,6 +63,11 @@ public class UserPanel {
         password2 = scanner.next();
         isEmpty = freeName(login);
 
+        // While loop check:
+        // * login is not used
+        // * password in longer than 4 sign
+        // * passwords are the same
+        // * password is different than login
         while (password1.equals(login) || password1.length() < 4 || !password1.equals(password2) || isEmpty)
         {
             if (password1.equals(login))
@@ -94,12 +100,12 @@ public class UserPanel {
                     + password1 + "',"  + priority + ")";
             statement.executeUpdate(sql);
             statement.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ignored) {
         }
-        // LoginPanel();
     }
 
+    // method checks if the login is never used, and check boolean value
+    // necessary login entered by user
     public boolean freeName(String login)
     {
         Statement statement;
@@ -124,21 +130,29 @@ public class UserPanel {
         return false;
     }
 
+    // Method used to verify login and password provided by user
     public void logIn()
     {
-        String login;
-        String password;
+        String login, password;
         int priority;
 
         System.out.println("Enter your login, and password or press 9 if you want back to main menu!");
         System.out.println("Enter your login: ");
         login = scanner.next();
+
+        // back to main menu when login or password is equals 9
+        if (login.equals("9"))
+            LoginPanel();
         System.out.println("Enter your password: ");
         password = scanner.next();
-        if (login.equals("9") || password.equals("9"))
-        {
+        // back to main menu when login or password is equals 9
+        if (password.equals("9"))
             LoginPanel();
-        }
+        // check what type of account is used
+        // * 0 - wrong login or password
+        // * 1 - admin account
+        // * 2 - teacher account
+        // * 3 - student account
         priority = checkAccount(login,password);
         if (priority != 0)
         {
@@ -151,11 +165,11 @@ public class UserPanel {
         }
     }
 
+    // method verify entered login/password with database password
     public int checkAccount(String login, String password)
     {
         Statement statement;
         String sql;
-
         try
         {
             statement = connection.createStatement();
@@ -173,9 +187,9 @@ public class UserPanel {
                 }
             }
         }
-        catch (SQLException throwables)
+        catch (SQLException e)
         {
-            throwables.printStackTrace();
+            e.printStackTrace();
         }
         System.out.println("Login or password is incorrect! Try again!");
         return 0;
