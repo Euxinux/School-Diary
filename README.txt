@@ -1,4 +1,4 @@
-  School dairy by Daniel Besztak (Dijkstra) README 09.02.2020
+  School diary by Daniel Besztak (Dijkstra) README 09.02.2020
 
 * Application write in JAVA language using IntelliJ IDEA 2020.2.3 like integrated development environment; 
 * Application using console Window to communicate with user (System scanner);
@@ -12,8 +12,8 @@ Application features:
 * Functions dependent on type account/priority (3 - 'Student', 2 - 'Teacher', 
   1 - 'Admin');
 * For all type account - Show all students, change password current account;
-* For Teacher and Admin - Add student to school dairy, Delete student from school
-  dairy and Edit student's personal data;
+* For Teacher and Admin - Add student to school diary, Delete student from school
+  diary and Edit student's personal data;
 * For Admin - Create all type account, Editing existing accounts, delete accounts,
   display all accounts with any information;
   
