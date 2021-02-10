@@ -1,4 +1,4 @@
-School dairy by Daniel Besztak (Dijkstra) README 09.02.2020
+  School dairy by Daniel Besztak (Dijkstra) README 09.02.2020
 
 * Application write in JAVA language using IntelliJ IDEA 2020.2.3 like integrated development environment; 
 * Application using console Window to communicate with user (System scanner);
