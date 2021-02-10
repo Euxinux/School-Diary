@@ -32,26 +32,26 @@ public class AccountType {
         {
             case 3:
                 System.out.println("Your account is 'Student'");
-                System.out.println("1. Show all students in school dairy");
+                System.out.println("1. Show all students in school diary");
                 System.out.println("2. Change password to account");
                 System.out.println("0. Logout. ");
                 break;
             case 2:
                 System.out.println("Your account is 'Teacher'");
-                System.out.println("1. Show all students in school dairy");
+                System.out.println("1. Show all students in school diary");
                 System.out.println("2. Change password to account");
-                System.out.println("3. Add student do school dairy");
-                System.out.println("4. Delete student from the school dairy");
+                System.out.println("3. Add student do school diary");
+                System.out.println("4. Delete student from the school diary");
                 System.out.println("5. Edit student's personal data");
                 System.out.println("6. Create new account - 'Student'");
                 System.out.println("0. Logout. ");
                 break;
             case 1:
                 System.out.println("Your account is 'Admin'");
-                System.out.println("1. Show all students in school dairy");
+                System.out.println("1. Show all students in school diary");
                 System.out.println("2. Change password to account");
-                System.out.println("3. Add student do school dairy");
-                System.out.println("4. Delete student from the school dairy");
+                System.out.println("3. Add student do school diary");
+                System.out.println("4. Delete student from the school diary");
                 System.out.println("5. Edit student's personal data");
                 System.out.println("6. Create new account - 'Student'/'Teacher'/'Admin'");
                 System.out.println("7. Edit exist account");
@@ -71,7 +71,7 @@ public class AccountType {
         switch (userAnswer)
         {
             case 1:
-                new SchoolDairy().DisplayStudent(connection);
+                new SchoolDiary().DisplayStudent(connection);
                 BackToMenu(infoDB);
                 break;
             case 2:
@@ -79,16 +79,16 @@ public class AccountType {
                 break;
             case 3:
                 if (Integer.parseInt(infoDB[2]) <3)
-                    new SchoolDairy().AddStudent(connection);
+                    new SchoolDiary().AddStudent(connection);
                 BackToMenu(infoDB);
                 break;
             case 4:
                 if (Integer.parseInt(infoDB[2]) <3)
-                    new SchoolDairy().DeleteStudent(connection);
+                    new SchoolDiary().DeleteStudent(connection);
                 BackToMenu(infoDB);
             case 5:
                 if (Integer.parseInt(infoDB[2]) <3)
-                    new SchoolDairy().EditStudent(connection);
+                    new SchoolDiary().EditStudent(connection);
                 BackToMenu(infoDB);
             case 6:
                 if (Integer.parseInt(infoDB[2]) <3)
@@ -327,7 +327,7 @@ public class AccountType {
         boolean acceptedID;
         String sql;
         ArrayList<Integer> usersIDs = ShowAccounts();
-        System.out.println("Which account you want delete from school dairy? Get ID: ");
+        System.out.println("Which account you want delete from school diary? Get ID: ");
         userID = scanner.nextInt();
         acceptedID = CheckID(userID, usersIDs);
 

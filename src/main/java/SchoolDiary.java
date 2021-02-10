@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class SchoolDairy {
+public class SchoolDiary {
     // Local variable used in method
     Scanner scanner = new Scanner(System.in);
     Statement statement = null;
 
-    // addStudent method allows to add student to school dairy,
+    // addStudent method allows to add student to school diary,
     // this method is available only for account with priority 'Admin' or 'Teacher'
     public void AddStudent(Connection connection) {
         // Set all needed variable
@@ -28,7 +28,7 @@ public class SchoolDairy {
         // Create statement, create command in SQL and execute update
         try {
             statement = connection.createStatement();
-            sql = "INSERT INTO `schooldairy`(`StudentID`, `Name`, `LastName`, `DateOfBrith`) " +
+            sql = "INSERT INTO `schooldiary`(`StudentID`, `Name`, `LastName`, `DateOfBirth`) " +
                     "VALUES (NULL,'" + name + "','" + lastName + "','" + stringBirth + "')";
             statement.executeUpdate(sql);
             statement.close();
@@ -37,7 +37,7 @@ public class SchoolDairy {
         }
     }
 
-    // deleteStudent method allows to delete student from school dairy
+    // deleteStudent method allows to delete student from school diary
     // this method is available only for account with priority 'Admin' or 'Teacher'
     public void DeleteStudent(Connection connection) {
         // ArrayList includes all unique student's IDs in DataBase
@@ -46,7 +46,7 @@ public class SchoolDairy {
         boolean acceptedID = false;
         String sql;
 
-        System.out.println("Which student you want delete from school dairy? Enter ID: ");
+        System.out.println("Which student you want delete from school diary? Enter ID: ");
         studentID = scanner.nextInt();
         // for each loop check entered value is exist in data base and return boolean value
         for (Integer allUsersID : studentsIDsDB) {
@@ -60,11 +60,11 @@ public class SchoolDairy {
             System.out.println("Your entered StudentID was wrong! Try one more time.");
             DeleteStudent(connection);
         }
-        // Deleting student from school dairy using SQL command
+        // Deleting student from school diary using SQL command
         try {
-            System.out.println("Deleting student: " + studentID + " from school dairy");
+            System.out.println("Deleting student: " + studentID + " from school diary");
             statement = connection.createStatement();
-            sql = "DELETE FROM schooldairy WHERE StudentID = " + studentID;
+            sql = "DELETE FROM schooldiary WHERE StudentID = " + studentID;
             statement.executeUpdate(sql);
             statement.close();
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class SchoolDairy {
         }
     }
 
-    // show all students in school dairy
+    // show all students in school diary
     // this method is available for all type of account
     // method return ArrayList with all student's IDs
     public ArrayList<Integer> DisplayStudent(Connection connection) {
@@ -82,15 +82,15 @@ public class SchoolDairy {
 
         try {
             statement = connection.createStatement();
-            sql = "SELECT `StudentID`,  `Name`, `LastName`, `DateOfBrith` FROM `schooldairy` ORDER BY LastName ASC";
+            sql = "SELECT `StudentID`,  `Name`, `LastName`, `DateOfBirth` FROM `schooldiary` ORDER BY LastName ASC";
             ResultSet rs = statement.executeQuery(sql);
 
             while (rs.next()) {
                 int idStudent = rs.getInt("StudentID");
                 String name = rs.getString("Name");
                 String lastName = rs.getString("LastName");
-                String dateOfBrith = rs.getString("DateOfBirth");
-                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBrith + " Personal ID: " + idStudent);
+                String dateOfBirth = rs.getString("DateOfBirth");
+                System.out.println(i + ". " + lastName + " " + name + " " + dateOfBirth + " Personal ID: " + idStudent);
                 studentsID.add(idStudent);
                 i++;
             }
@@ -127,7 +127,7 @@ public class SchoolDairy {
             System.out.println("Which parameter you want edit?");
             System.out.println("1. Name");
             System.out.println("2. Lastname");
-            System.out.println("3. Date of Brith");
+            System.out.println("3. Date of Birth");
 
             try {
                 studentEdit = scanner.nextInt();
@@ -139,19 +139,19 @@ public class SchoolDairy {
                 case 1: {
                     System.out.println("Enter new name: ");
                     correctParameter = scanner.next();
-                    sql = "UPDATE schooldairy SET Name = '" + correctParameter + "' WHERE StudentID = " + studentID;
+                    sql = "UPDATE schooldiary SET Name = '" + correctParameter + "' WHERE StudentID = " + studentID;
                     break;
                 }
                 case 2: {
                     System.out.println("Enter new lastname: ");
                     correctParameter = scanner.next();
-                    sql = "UPDATE schooldairy SET LastName = '" + correctParameter + "' WHERE StudentID = " + studentID;
+                    sql = "UPDATE schooldiary SET LastName = '" + correctParameter + "' WHERE StudentID = " + studentID;
                     break;
                 }
                 case 3: {
-                    System.out.println("Enter new Date of Brith in format YYYY-MM-DD: ");
+                    System.out.println("Enter new Date of Birth in format YYYY-MM-DD: ");
                     correctParameter = scanner.next();
-                    sql = "UPDATE schooldairy SET DateOfBrith = '" + correctParameter + "' WHERE StudentID = " + studentID;
+                    sql = "UPDATE schooldiary SET DateOfBirth = '" + correctParameter + "' WHERE StudentID = " + studentID;
                     break;
                 }
             }

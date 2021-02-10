@@ -18,11 +18,11 @@ public class UserPanel {
 
     // First/ Main screen JAVA API
     // Two possible options to choose, easy option to expansion
-    // 1. Create new account to login in school dairy
+    // 1. Create new account to login in school diary
     // 2. Sing up with using already existing account
     public void LoginPanel()
     {
-        System.out.println("Welcome in SchoolDairy by Dijkstra");
+        System.out.println("Welcome in School Diary by Dijkstra");
         System.out.println("                                  ");
         // While loop to accept only options 1 or 2
         while (choiceUser != 1 && choiceUser !=2) {
@@ -93,7 +93,7 @@ public class UserPanel {
             isEmpty = freeName(login);
 
         }
-            System.out.println("Your account has been created! Now you can log in to you school dairy!");
+            System.out.println("Your account has been created! Now you can log in to you school diary!");
         try {
             statement = connection.createStatement();
             sql = "INSERT INTO users (UsersID,Login,Password,Priority) VALUES (NULL,'" + login + "','"
